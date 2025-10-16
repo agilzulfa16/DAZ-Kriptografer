@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Cipher Multi-Metode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+        }
+
+        .form-control, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .result-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 2px solid #e0e0e0;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .cipher-options {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            background: #f0f4ff;
+            border-radius: 8px;
+        }
+
+        .cipher-options.show {
+            display: block;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            width: auto;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #5568d3;
+        }
+
+        .file-name {
+            margin-left: 15px;
+            color: #666;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 DAZ Kriptografer</h1>
+            <p>Enkripsi dan Dekripsi dengan Berbagai Algoritma Cipher</p>
+        </div>
+
+        <div class="content">
+            <div id="alertBox"></div>
+
+            <form id="cipherForm">
+                <div class="form-group">
+                    <label for="cipherType">Pilih Metode Cipher:</label>
+                    <select id="cipherType" name="cipher_type" class="form-control" required>
+                        <option value="">-- Pilih Cipher --</option>
+                        <option value="vigenere">Vigenere Cipher (26 huruf)</option>
+                        <option value="autokey">Auto-Key Vigenere Cipher (26 huruf)</option>
+                        <option value="extended_vigenere">Extended Vigenere Cipher (256 ASCII)</option>
+                        <option value="playfair">Playfair Cipher (26 huruf)</option>
+                        <option value="affine">Affine Cipher (26 huruf)</option>
+                        <option value="hill">Hill Cipher (26 huruf)</option>
+                        <option value="super">Super Enkripsi (Extended Vigenere + Transposisi)</option>
+                        <option value="enigma">Enigma Cipher</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Mode Operasi:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="operation" value="encrypt" checked>
+                            Enkripsi
+                        </label>
+                        <label>
+                            <input type="radio" name="operation" value="decrypt">
+                            Dekripsi
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Input Data:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="input_type" value="text" checked>
+                            Teks Manual
+                        </label>
+                        <label>
+                            <input type="radio" name="input_type" value="file">
+                            Upload File
+                        </label>
+                    </div>
+                </div>
+
+                <div id="textInput" class="form-group">
+                    <label for="inputText">Masukkan Teks:</label>
+                    <textarea id="inputText" name="text" class="form-control" placeholder="Ketik atau paste teks di sini..."></textarea>
+                </div>
+
+                <div id="fileInput" class="form-group" style="display: none;">
+                    <label>Upload File:</label>
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="fileUpload">
+                            📁 Pilih File
+                        </label>
+                        <input type="file" id="fileUpload" name="file">
+                        <span class="file-name" id="fileName">Belum ada file dipilih</span>
+                    </div>
+                    <p class="info-text">File dapat berupa text, gambar, document, atau file binary lainnya</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="key">Kunci Enkripsi/Dekripsi:</label>
+                    <input type="text" id="key" name="key" class="form-control" placeholder="Masukkan kunci..." required>
+                    <p class="info-text">Panjang kunci bebas. Untuk cipher 26 huruf, hanya huruf yang digunakan.</p>
+                </div>
+
+                <!-- Cipher-specific options -->
+                <div id="affineOptions" class="cipher-options">
+                    <h3>Parameter Affine Cipher</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="affineA">Parameter a (harus coprime dengan 26):</label>
+                            <input type="number" id="affineA" name="affine_a" class="form-control" value="5" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="affineB">Parameter b:</label>
+                            <input type="number" id="affineB" name="affine_b" class="form-control" value="8" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="hillOptions" class="cipher-options">
+                    <h3>Parameter Hill Cipher</h3>
+                    <div class="form-group">
+                        <label for="matrixSize">Ukuran Matriks:</label>
+                        <select id="matrixSize" name="matrix_size" class="form-control">
+                            <option value="2">2x2</option>
+                            <option value="3">3x3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hillMatrix">Matriks Kunci (format JSON array):</label>
+                        <textarea id="hillMatrix" name="hill_matrix" class="form-control" rows="3">[[6,24,1],[13,16,10],[20,17,15]]</textarea>
+                        <p class="info-text">Contoh 2x2: [[3,3],[2,5]] | Contoh 3x3: [[6,24,1],[13,16,10],[20,17,15]]</p>
+                    </div>
+                </div>
+
+                <div id="superOptions" class="cipher-options">
+                    <h3>Parameter Super Enkripsi</h3>
+                    <div class="form-group">
+                        <label for="key2">Kunci Transposisi Kolom:</label>
+                        <input type="text" id="key2" name="key2" class="form-control" placeholder="Contoh: SECRETKEY" value="KEY">
+                    </div>
+                </div>
+
+                <div id="enigmaOptions" class="cipher-options">
+                    <h3>Parameter Enigma Cipher</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="enigmaRotor">Posisi Rotor (3 huruf):</label>
+                            <input type="text" id="enigmaRotor" name="enigma_rotor" class="form-control" placeholder="AAA" value="AAA" maxlength="3" pattern="[A-Za-z]{3}">
+                        </div>
+                        <div class="form-group">
+                            <label for="enigmaRing">Ring Settings (3 huruf):</label>
+                            <input type="text" id="enigmaRing" name="enigma_ring" class="form-control" placeholder="AAA" value="AAA" maxlength="3" pattern="[A-Za-z]{3}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">🔒 Proses</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                </div>
+            </form>
+
+            <div class="loading" id="loadingBox">
+                <div class="spinner"></div>
+                <p>Memproses...</p>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <h3>📊 Hasil:</h3>
+                <div class="result-box" id="resultBox"></div>
+                
+                <h3 style="margin-top: 25px;">📝 Base64 Encoding:</h3>
+                <div class="result-box" id="base64Box"></div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="downloadResult()">💾 Download Hasil</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Copy Base64</button>
+                </div>
+            </div>
+            <div id="footer">
+                <p>&copy; 2025 Dibuat oleh Agil Zulfa, Dimas Aditya, Zidan Fadlan</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let resultData = null;
+        let currentFilename = 'encrypted.dat';
+
+        // Toggle input type
+        document.querySelectorAll('input[name="input_type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'text') {
+                    document.getElementById('textInput').style.display = 'block';
+                    document.getElementById('fileInput').style.display = 'none';
+                } else {
+                    document.getElementById('textInput').style.display = 'none';
+                    document.getElementById('fileInput').style.display = 'block';
+                }
+            });
+        });
+
+        // File input change
+        document.getElementById('fileUpload').addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : 'Belum ada file dipilih';
+            document.getElementById('fileName').textContent = fileName;
+        });
+
+        // Cipher type change
+        document.getElementById('cipherType').addEventListener('change', function() {
+            // Hide all options
+            document.querySelectorAll('.cipher-options').forEach(opt => {
+                opt.classList.remove('show');
+            });
+
+            // Show specific options
+            const value = this.value;
+            if (value === 'affine') {
+                document.getElementById('affineOptions').classList.add('show');
+            } else if (value === 'hill') {
+                document.getElementById('hillOptions').classList.add('show');
+            } else if (value === 'super') {
+                document.getElementById('superOptions').classList.add('show');
+            } else if (value === 'enigma') {
+                document.getElementById('enigmaOptions').classList.add('show');
+            }
+        });
+
+        // Form submit
+        document.getElementById('cipherForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const alertBox = document.getElementById('alertBox');
+            const loadingBox = document.getElementById('loadingBox');
+            const resultSection = document.getElementById('resultSection');
+            
+            alertBox.innerHTML = '';
+            resultSection.classList.remove('show');
+            loadingBox.classList.add('show');
+
+            try {
+                const response = await fetch('/encrypt', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                loadingBox.classList.remove('show');
+
+                if (data.success) {
+                    resultData = data.result;
+                    currentFilename = data.filename || 'encrypted.dat';
+                    
+                    document.getElementById('resultBox').textContent = 
+                        data.result_text.substring(0, 500) + (data.result_text.length > 500 ? '...' : '');
+                    document.getElementById('base64Box').textContent = 
+                        data.result.substring(0, 500) + (data.result.length > 500 ? '...' : '');
+                    
+                    resultSection.classList.add('show');
+                    
+                    alertBox.innerHTML = '<div class="alert alert-success">✅ Proses berhasil!</div>';
+                } else {
+                    alertBox.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                loadingBox.classList.remove('show');
+                alertBox.innerHTML = `<div class="alert alert-danger">❌ Error: ${error.message}</div>`;
+            }
+        });
+
+        function downloadResult() {
+            if (!resultData) {
+                alert('Tidak ada data untuk didownload');
+                return;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/download';
+
+            const dataInput = document.createElement('input');
+            dataInput.type = 'hidden';
+            dataInput.name = 'data';
+            dataInput.value = resultData;
+
+            const filenameInput = document.createElement('input');
+            filenameInput.type = 'hidden';
+            filenameInput.name = 'filename';
+            filenameInput.value = currentFilename;
+
+            form.appendChild(dataInput);
+            form.appendChild(filenameInput);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function copyToClipboard() {
+            if (!resultData) {
+                alert('Tidak ada data untuk dicopy');
+                return;
+            }
+
+            navigator.clipboard.writeText(resultData).then(() => {
+                alert('✅ Base64 berhasil dicopy ke clipboard!');
+            }).catch(err => {
+                alert('❌ Gagal copy ke clipboard');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('cipherForm').reset();
+            document.getElementById('resultSection').classList.remove('show');
+            document.getElementById('alertBox').innerHTML = '';
+            document.getElementById('fileName').textContent = 'Belum ada file dipilih';
+            document.querySelectorAll('.cipher-options').forEach(opt => {
+                opt.classList.remove('show');
+            });
+            resultData = null;
+        }
+    </script>
+</body>
+</html>
