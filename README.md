@@ -62,15 +62,9 @@ Secara default Flask akan jalan di `http://127.0.0.1:5000`.
 
 ---
 
-## File `requirements.txt` Terperinci
-
-Berikut versi yang lebih rinci dan kompatibel lintas platform dari file `requirements.txt`:
+## Cara menggunakan program
 
 ```
-# Core dependencies
-Flask==3.0.3              # Framework web utama
-numpy==1.26.1             # Untuk operasi matriks (Hill cipher)
-
 
 ## Cara Menggunakan Program
 
